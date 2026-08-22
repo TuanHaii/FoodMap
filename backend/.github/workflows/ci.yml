@@ -1,9 +1,0 @@
-name: CI
-on: [push, pull_request]
-jobs:
-  quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: TODO install dependencies and run Pint/Pest/build
-        run: echo "Scaffold only"
