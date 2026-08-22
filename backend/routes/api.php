@@ -1,0 +1,11 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('v1')->group(function (): void {
+    require __DIR__.'/api/v1/auth.php';
+    require __DIR__.'/api/v1/restaurants.php';
+    require __DIR__.'/api/v1/reviews.php';
+    require __DIR__.'/api/v1/media.php';
+    require __DIR__.'/api/v1/owner.php';
+});

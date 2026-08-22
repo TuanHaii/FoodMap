@@ -1,0 +1,8 @@
+{
+  "name": "long-xuyen-food-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {"dev": "vite", "build": "tsc -b && vite build", "lint": "eslint ."},
+  "dependencies": {"@vitejs/plugin-react": "latest", "axios": "latest", "react": "^18.0.0", "react-dom": "^18.0.0", "react-router-dom": "latest", "zod": "latest"},
+  "devDependencies": {"typescript": "latest", "vite": "latest"}
+}
