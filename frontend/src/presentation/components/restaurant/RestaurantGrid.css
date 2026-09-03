@@ -1,0 +1,58 @@
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* 1 column on mobile 390px */
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.restaurant-grid-2-cols {
+  grid-template-columns: 1fr;
+}
+
+.restaurant-grid-3-cols {
+  grid-template-columns: 1fr;
+}
+
+.restaurant-grid-4-cols {
+  grid-template-columns: 1fr;
+}
+
+/* Tablet (>= 640px) */
+@media (min-width: 640px) {
+  .restaurant-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+  }
+
+  .restaurant-grid-2-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .restaurant-grid-3-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .restaurant-grid-4-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop (>= 1024px) */
+@media (min-width: 1024px) {
+  .restaurant-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+  }
+
+  .restaurant-grid-2-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .restaurant-grid-3-cols {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .restaurant-grid-4-cols {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

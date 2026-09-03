@@ -1,0 +1,14 @@
+<?php
+namespace App\Http\Controllers\Api\V1;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\RestaurantResource;
+use App\Models\Restaurant;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+class RestaurantController extends Controller {
+ private function query() { return Restaurant::query()->where('state','PUBLISHED')->with(['category','media'])->select('restaurants.*')->selectRaw('ST_Y(location::geometry) as latitude, ST_X(location::geometry) as longitude'); }
+ public function index(Request $request) { $data=$request->validate(['category'=>['nullable','integer','exists:categories,id'],'sort'=>['nullable','in:rating,newest,popular'],'page'=>['nullable','integer','min:1'],'per_page'=>['nullable','integer','min:1','max:50']]); $q=$this->query(); if(isset($data['category']))$q->where('category_id',$data['category']); match($data['sort']??'newest') {'rating'=>$q->orderByDesc('avg_rating')->orderByDesc('rating_count'),'popular'=>$q->orderByDesc('view_count'),default=>$q->latest()}; return RestaurantResource::collection($q->paginate($data['per_page']??12)); }
+ public function search(Request $request) { $data=$request->validate(['q'=>['nullable','string','max:200'],'category'=>['nullable','integer','exists:categories,id'],'sort'=>['nullable','in:rating,newest,popular'],'page'=>['nullable','integer','min:1'],'per_page'=>['nullable','integer','min:1','max:50']]); $q=$this->query(); if(!empty($data['q'])) $q->whereRaw("search_vector @@ websearch_to_tsquery('simple', unaccent(?))",[$data['q']]); if(isset($data['category']))$q->where('category_id',$data['category']); ($data['sort']??null)==='rating'?$q->orderByDesc('avg_rating'):(($data['sort']??null)==='popular'?$q->orderByDesc('view_count'):$q->latest()); return RestaurantResource::collection($q->paginate($data['per_page']??12)); }
+ public function show(Restaurant $restaurant) { abort_unless($restaurant->state==='PUBLISHED',404); $restaurant=$this->query()->with('dishes.media')->findOrFail($restaurant->id); return new RestaurantResource($restaurant); }
+ public function store(Request $request) { $data=$request->validate(['name'=>['required','string','max:255'],'description'=>['nullable','string'],'category_id'=>['nullable','integer','exists:categories,id'],'address'=>['nullable','string','max:255'],'ward'=>['nullable','string','max:255'],'district'=>['nullable','string','max:255'],'city'=>['required','string','max:255'],'phone'=>['nullable','string','max:30'],'price_range'=>['nullable','in:low,mid,high']]); $base=Str::slug($data['name']); $slug=$base; $i=2; while(Restaurant::withTrashed()->where('slug',$slug)->exists())$slug=$base.'-'.$i++; $restaurant=Restaurant::create([...$data,'slug'=>$slug,'submitted_by'=>$request->user()->id]); return (new RestaurantResource($restaurant))->response()->setStatusCode(201); }
+}

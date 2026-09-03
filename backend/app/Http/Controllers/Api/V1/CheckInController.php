@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Api\V1;
+use App\Http\Controllers\Controller; use App\Models\CheckIn; use App\Models\Restaurant; use Illuminate\Http\Request;
+class CheckInController extends Controller { public function store(Request $request,Restaurant $restaurant) { abort_unless($restaurant->state==='PUBLISHED',404); $data=$request->validate(['latitude'=>['nullable','numeric','between:-90,90','required_with:longitude'],'longitude'=>['nullable','numeric','between:-180,180','required_with:latitude']]); $checkIn=new CheckIn(['user_id'=>$request->user()->id,'restaurant_id'=>$restaurant->id]); if(isset($data['latitude']))$checkIn->location=\DB::raw("ST_SetSRID(ST_MakePoint({$data['longitude']}, {$data['latitude']}), 4326)::geography"); $checkIn->save(); return response()->json(['data'=>['id'=>$checkIn->id,'restaurant_id'=>$restaurant->id,'created_at'=>$checkIn->created_at]],201); } }

@@ -1,0 +1,5 @@
+<?php
+namespace App\Http\Resources;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+class RestaurantResource extends JsonResource { public function toArray(Request $request): array { return ['id' => $this->id, 'name' => $this->name, 'slug' => $this->slug, 'description' => $this->description, 'category' => new CategoryResource($this->whenLoaded('category')), 'address' => $this->address, 'ward' => $this->ward, 'district' => $this->district, 'city' => $this->city, 'latitude' => $this->when(isset($this->latitude), fn () => (float) $this->latitude), 'longitude' => $this->when(isset($this->longitude), fn () => (float) $this->longitude), 'phone' => $this->phone, 'price_range' => $this->price_range, 'avg_rating' => (float) $this->avg_rating, 'rating_count' => $this->rating_count, 'listing_verification_status' => $this->listing_verification_status, 'media' => MediaResource::collection($this->whenLoaded('media')), 'dishes' => DishResource::collection($this->whenLoaded('dishes')), 'created_at' => $this->created_at]; } }

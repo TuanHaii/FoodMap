@@ -1,0 +1,26 @@
+.responsive-img-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg-muted);
+}
+
+.responsive-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--transition-base) ease-in-out, transform var(--transition-slow) ease;
+}
+
+.responsive-img.loaded {
+  opacity: 1;
+}
+
+.responsive-img-placeholder {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-bg-muted);
+}
