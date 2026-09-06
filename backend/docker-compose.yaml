@@ -1,0 +1,32 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "10000:10000"
+
+    env_file:
+      - .env
+
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:18
+
+    environment:
+      POSTGRES_DB: lxReview
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
