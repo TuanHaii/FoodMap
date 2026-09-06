@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Input } from '../components/common/Input/Input';
@@ -27,8 +28,8 @@ export const RegisterPage: React.FC = () => {
       setError('Mật khẩu xác nhận không khớp');
       return;
     }
-    if (password.length < 6) {
-      setError('Mật khẩu tối thiểu 6 ký tự');
+    if (password.length < 8) {
+      setError('Mật khẩu tối thiểu 8 ký tự');
       return;
     }
 
@@ -43,8 +44,19 @@ export const RegisterPage: React.FC = () => {
         role,
       });
       navigate(role === 'restaurant_owner' ? '/business' : '/');
-    } catch {
-      setError('Đăng ký không thành công. Email có thể đã tồn tại.');
+    } catch (requestError) {
+      if (axios.isAxiosError(requestError)) {
+        const validationErrors = requestError.response?.data?.errors as
+          | Record<string, string[]>
+          | undefined;
+        const firstMessage = validationErrors
+          ? Object.values(validationErrors).flat()[0]
+          : undefined;
+
+        setError(firstMessage ?? requestError.response?.data?.message ?? 'Đăng ký không thành công.');
+      } else {
+        setError('Đăng ký không thành công. Vui lòng thử lại.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +132,7 @@ export const RegisterPage: React.FC = () => {
         <Input
           label="Mật khẩu"
           type="password"
-          placeholder="Tối thiểu 6 ký tự"
+          placeholder="Tối thiểu 8 ký tự"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
